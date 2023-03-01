@@ -50,4 +50,17 @@ class HomeController extends Controller {
     public function profile() {
         return view( "profile" );
     }
+
+    public function saveProfile( Request $request ) {
+        if ( Auth::check() ) {
+            /** @var \App\Models\User $user **/
+            $user = Auth::user();
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->nickname = $request->nickname;
+            $user->save();
+            return redirect()->route( 'shout.profile' );
+        }
+    }
+
 }
