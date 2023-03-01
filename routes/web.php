@@ -23,6 +23,8 @@ Auth::routes();
 
 Route::get( '/home', [HomeController::class, 'index'] )->name( 'home' );
 Route::get( '/shout', [HomeController::class, 'shoutHome'] )->name( 'shout' );
+Route::get( '/shout/{nickname}', [HomeController::class, 'publicTimeline'] )->name( 'shout.public' );
+
 Route::get( '/profile', [HomeController::class, 'profile'] )->name( 'shout.profile' );
 Route::post( '/saveprofile', [HomeController::class, 'saveProfile'] )->name( 'shout.saveprofile' );
 Route::post( '/savestatus', [HomeController::class, 'saveStatus'] )->name( 'shout.save' );

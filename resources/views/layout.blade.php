@@ -62,7 +62,7 @@
 </head>
 
 <body>
-    {{-- <div class="container-fluid p-0 m-0">
+    <div class="container-fluid p-0 m-0">
         <div class="row-fluid no-gutters">
             <div class="col-md-12">
                 <div class="topbar">
@@ -71,8 +71,8 @@
             </div>
 
         </div>
-    </div> --}}
-    {{-- <div class="header">
+    </div>
+    <div class="header">
         <div class="container h-100">
             <div class="row">
                 <div class="col-md-12">
@@ -83,7 +83,7 @@
                 </div>
             </div>
         </div>
-    </div> --}}
+    </div>
     @yield('form');
     @yield('status');
 </body>

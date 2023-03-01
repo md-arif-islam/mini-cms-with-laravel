@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Status;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -26,11 +27,30 @@ class HomeController extends Controller {
     }
 
     public function shoutHome() {
-
+        $user = Auth::user();
         $userId = Auth::id();
         $status = Status::where( "user_id", $userId )->orderBy( "id", "DESC" )->get();
 
-        return view( "shouthome", ["status" => $status] );
+        $avatar = empty( $user->avatar ) ? asset( 'images/avatar.jpg' ) : $user->avatar;
+        return view( "shouthome", ["status" => $status, "avatar" => $avatar] );
+    }
+
+    public function publicTimeline( $nickname ) {
+        $user = User::where( 'nickname', $nickname )->first();
+        if ( $user ) {
+            $status = Status::where( 'user_id', $user->id )->orderBy( 'id', 'desc' )->get();
+            $avatar = empty( $user->avatar ) ? asset( 'images/avatar.jpg' ) : $user->avatar;
+            $name = $user->name;
+
+            return view( "shoutpublic", array(
+                'status' => $status,
+                'avatar' => $avatar,
+                'name' => $name,
+            ) );
+        } else {
+            return redirect( '/' );
+        }
+
     }
 
     public function saveStatus( Request $request ) {
@@ -53,11 +73,16 @@ class HomeController extends Controller {
 
     public function saveProfile( Request $request ) {
         if ( Auth::check() ) {
-            /** @var \App\Models\User $user **/
             $user = Auth::user();
             $user->name = $request->name;
             $user->email = $request->email;
             $user->nickname = $request->nickname;
+
+            $profileImage = 'user-' . $user->id . '.' . $request->image->extension();
+            $request->image->move( public_path( 'images' ), $profileImage );
+            $user->avatar = asset( "images/{$profileImage}" );
+
+            /** @var \App\Models\User $user **/
             $user->save();
             return redirect()->route( 'shout.profile' );
         }
