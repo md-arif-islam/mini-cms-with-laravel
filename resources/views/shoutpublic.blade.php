@@ -37,7 +37,10 @@
 
 @section('actions')
     @if ($displayActions)
-        <a href='{{ route('shout.makefriend', $friendId) }}'>Make Friend</a> |
-        <a href='{{ route('shout.unfriend', $friendId) }}'>Unfriend</a>
+        @if ($alreadyFriend)
+            <a href='{{ route('shout.unfriend', $friendId) }}'>Unfriend</a>
+        @else
+            <a href='{{ route('shout.makefriend', $friendId) }}'>Make Friend</a>
+        @endif
     @endif
 @endsection

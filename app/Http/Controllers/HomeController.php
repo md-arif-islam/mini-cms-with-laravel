@@ -49,14 +49,30 @@ class HomeController extends Controller {
                     $displayActions = true;
                 }
             }
+
+            $alreadyFriend = false;
+            $userId = Auth::user()->id;
+            $nickname = implode( '/', array_slice( request()->segments(), 1 ) );
+            if ( $nickname ) {
+                $friend = User::where( 'nickname', $nickname )->first();
+
+                if ( Friend::where( 'user_id', $userId )->where( 'friend_id', $friend['id'] )->count() == 0 ) {
+
+                } else {
+                    $alreadyFriend = true;
+                }
+
+            }
             return view( "shoutpublic", array(
                 'status' => $status,
                 'avatar' => $avatar,
                 'name' => $name,
                 'displayActions' => $displayActions,
                 'friendId' => $user->id,
+                "alreadyFriend" => $alreadyFriend,
             ) );
         } else {
+
             return redirect( '/' );
         }
 
@@ -114,7 +130,10 @@ class HomeController extends Controller {
             $friendship->save();
         }
 
-        return redirect()->route( 'shout' );
+        $userFromId = User::where( 'id', $friendId )->first();
+        $nicknameFromUser = $userFromId['nickname'];
+
+        return redirect()->route( "shout.public", ["nickname" => $nicknameFromUser] );
     }
 
     public function unFriend( $friendId ) {
