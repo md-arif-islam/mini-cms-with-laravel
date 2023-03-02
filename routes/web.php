@@ -28,3 +28,6 @@ Route::get( '/shout/{nickname}', [HomeController::class, 'publicTimeline'] )->na
 Route::get( '/profile', [HomeController::class, 'profile'] )->name( 'shout.profile' );
 Route::post( '/saveprofile', [HomeController::class, 'saveProfile'] )->name( 'shout.saveprofile' );
 Route::post( '/savestatus', [HomeController::class, 'saveStatus'] )->name( 'shout.save' );
+
+Route::get( '/shout/makefriend/{friendId}', [HomeController::class, 'makeFriend'] )->name( 'shout.makefriend' );
+Route::get( '/shout/unfriend/{friendId}', [HomeController::class, 'unFriend'] )->name( 'shout.unfriend' );

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Friend;
 use App\Models\Status;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -42,10 +43,18 @@ class HomeController extends Controller {
             $avatar = empty( $user->avatar ) ? asset( 'images/avatar.jpg' ) : $user->avatar;
             $name = $user->name;
 
+            $displayActions = false;
+            if ( Auth::check() ) {
+                if ( Auth::user()->id != $user->id ) {
+                    $displayActions = true;
+                }
+            }
             return view( "shoutpublic", array(
                 'status' => $status,
                 'avatar' => $avatar,
                 'name' => $name,
+                'displayActions' => $displayActions,
+                'friendId' => $user->id,
             ) );
         } else {
             return redirect( '/' );
@@ -86,6 +95,34 @@ class HomeController extends Controller {
             $user->save();
             return redirect()->route( 'shout.profile' );
         }
+    }
+
+    public function makeFriend( $friendId ) {
+
+        $userId = Auth::user()->id;
+        if ( Friend::where( 'user_id', $userId )->where( 'friend_id', $friendId )->count() == 0 ) {
+            $friendship = new Friend();
+            $friendship->user_id = $userId;
+            $friendship->friend_id = $friendId;
+            $friendship->save();
+        }
+
+        if ( Friend::where( 'friend_id', $userId )->where( 'user_id', $friendId )->count() == 0 ) {
+            $friendship = new Friend();
+            $friendship->friend_id = $userId;
+            $friendship->user_id = $friendId;
+            $friendship->save();
+        }
+
+        return redirect()->route( 'shout' );
+    }
+
+    public function unFriend( $friendId ) {
+        $userId = Auth::user()->id;
+        Friend::where( 'user_id', $userId )->where( 'friend_id', $friendId )->delete();
+        Friend::where( 'friend_id', $userId )->where( 'user_id', $friendId )->delete();
+
+        return redirect()->route( 'shout' );
     }
 
 }
